@@ -1,0 +1,151 @@
+spring:
+  kafka:
+    producer:
+      value-serializer: io.confluent.kafka.serializers.KafkaAvroSerializer
+      acks: all
+      batch:
+        size: '16384'
+      linger:
+        ms: '1'
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      buffer:
+        memory: '33554432'
+      bootstrap-servers: localhost:9092
+      retries: '1'
+      properties:
+        transactional-id: ${om.naming.prefix}demo_service-adpt-tx-
+      enable:
+        idempotence: 'true'
+    consumer:
+      group-id: ${om.naming.prefix}demo_service_adapter_group
+      enable-auto-commit: 'false'
+      auto-offset-reset: earliest
+      session-timeout-ms: '10000'
+      value-deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
+      isolation-level: read_committed
+      bootstrap-servers: localhost:9092
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      max-poll-interval-ms: '300000'
+      max-poll-records: '500'
+    properties:
+      schema-registry-url: http://localhost:8081
+  sql:
+    init:
+      mode: always
+  datasource:
+    password: welcome123
+    url: jdbc:postgresql://localhost:5432/postgres?currentSchema=soi_service
+    hikari:
+      idleTimeout: '600000'
+      connectionTimeout: '60000'
+      maximum-pool-size: '2'
+      maxLifetime: '1800000'
+      transaction-isolation: TRANSACTION_READ_COMMITTED
+      auto-commit: 'false'
+      minimum-idle: '1'
+    driver-class-name: org.postgresql.Driver
+    username: postgres
+    type: com.zaxxer.hikari.HikariDataSource
+  jpa:
+    hibernate:
+      ddl-auto: none
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+om:
+  kafka:
+    topic:
+      scheduler_order:
+        retry_count: '1'
+        groupId: ${spring.kafka.consumer.group-id}
+        consumers: '1'
+        create_topic: 'false'
+        consumer_config: 'true'
+        retry_delay: '1000'
+        name: ${om.naming.prefix}com.sigma.om.core.order.OrderEvent
+        create_factory: 'true'
+        partitions: '3'
+        replication_factor: '1'
+      request:
+        name: ${om.soi.topic.name.prefix}${om.soi.adapter.name}${om.soi.topic.request.suffix}
+        create_factory: 'true'
+        consumer_config: 'true'
+        groupId: ${spring.kafka.consumer.group-id}
+        create_topic: 'false'
+      reply:
+        groupId: ${spring.kafka.consumer.group-id}
+        name: ${om.soi.topic.name.prefix}${om.soi.adapter.name}${om.soi.topic.reply.suffix}
+        create_topic: 'false'
+        create_factory: 'true'
+        consumer_config: 'true'
+        message_class: com.sigma.om.event.message.interaction.InteractionEventMessage
+      soi_enrichment:
+        name: ${om.naming.prefix}com.sigma.om.core.soi.SOIEnrichmentEvent
+        producer_config: 'true'
+        message_class: com.sigma.om.event.message.soi.SOIEnrichmentEventMessage
+      request_error:
+        create_factory: 'true'
+        name: ${om.soi.topic.name.prefix}${om.soi.adapter.name}${om.soi.topic.request_error.suffix}
+        consumer_config: 'true'
+        create_topic: 'false'
+        groupId: ${spring.kafka.consumer.group-id}
+      replication_factor:
+        default: '1'
+      stop:
+        consumer_config: 'true'
+        name: ${om.soi.topic.name.prefix}${om.soi.adapter.name}${om.soi.topic.stop.suffix}
+        groupId: ${spring.kafka.consumer.group-id}
+        create_factory: 'true'
+        create_topic: 'false'
+      enable_default_error_handing:
+        default: 'false'
+      create_factory: 'false'
+      retry_delay:
+        default: '10000'
+      consumers:
+        default: '3'
+      create_topic: 'false'
+      partitions:
+        default: '3'
+      retry_count:
+        default: '3'
+    consumer:
+      enabled: 'true'
+    enable_error_handing: 'true'
+    producer:
+      enabled: 'true'
+  entity:
+    spec:
+      db:
+        cache:
+          maxEntriesLocalHeap: '100'
+          compressObjects: 'false'
+          timeToIdleSeconds: '300'
+          enabled: 'true'
+          statistics: 'false'
+          timeToLiveSeconds: '0'
+          maxEntriesLocalDisk: '0'
+      cache:
+        maxEntriesLocalHeap: '100'
+        enabled: 'true'
+        timeToIdleSeconds: '300'
+        statistics: 'false'
+        maxEntriesLocalDisk: '0'
+        compressObjects: 'false'
+        timeToLiveSeconds: '0'
+  database:
+    enabled: 'true'
+  service:
+    soi:
+      url: http://localhost:19000/soiservice
+    activity:
+      url: http://localhost:11000/activityservice
+    order:
+      url: http://localhost:9001/orderservice
+  scheduler:
+    consumer:
+      enabled: 'true'
+server:
+  error:
+    include-message: always
+  port: '9011'
+  servlet:
+    context-path: /omdemoserviceadapter

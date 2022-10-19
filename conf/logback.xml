@@ -1,0 +1,62 @@
+<configuration scan="true" scanPeriod="60 seconds">
+
+    <statusListener class="ch.qos.logback.core.status.NopStatusListener" />
+    <contextName>om-demo-service-adapter</contextName>
+    <!--
+    These variables control the date-based rollover configuration for the log files with static class names.
+
+    %d{yyyy-MM-dd_HH-mm} = Archive files at the top of every minute.
+    %d{yyyy-MM-dd_HH} = Archive files at the top of every hour.
+    %d{yyyy-MM-dd} = Archive files at midnight every day.
+    %d{yyyy-ww} = Archive files at the start of every week (locale dependent).
+    %d{yyyy/MM} = Archive files at the start of every month.
+    -->
+    <property name="ROLLOVER_DATE_EXPR" value="%d{yyyy-MM-dd_HH}" />
+    <!-- The number of archive files to keep. -->
+    <property name="ROLLOVER_HISTORY_FILES" value="336" />
+
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${log.dir:-.}/logs/om-demo-service-adapter.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${log.dir:-.}/logs/om-demo-service-adapter.${ROLLOVER_DATE_EXPR}_%d{HHmmss,aux}.log</fileNamePattern>
+            <TimeBasedFileNamingAndTriggeringPolicy class="com.sigma.om.spring.logback.StartupTimeBasedTriggeringPolicy">
+            </TimeBasedFileNamingAndTriggeringPolicy >
+            <maxHistory>${ROLLOVER_HISTORY_FILES}</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd} %date{HH:mm:ss.SSS} %X{x-correlation-id} %X{x-request-id}  %-5level %contextName --- [%thread] %logger{36} %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{yyyy-MM-dd} %date{HH:mm:ss.SSS} %X{x-correlation-id} %X{x-request-id}  %-5level %contextName --- [%thread] %logger{36} %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="ASYNC_FILE" class="ch.qos.logback.classic.AsyncAppender">
+        <!--queueSize>1</queueSize>
+        <discardingThreshold>0</discardingThreshold-->
+        <appender-ref ref="FILE" />
+    </appender>
+    <appender name="ASYNC_STDOUT" class="ch.qos.logback.classic.AsyncAppender">
+        <!--queueSize>500</queueSize>
+        <discardingThreshold>0</discardingThreshold-->
+        <appender-ref ref="STDOUT" />
+    </appender>
+
+    <root level="ERROR">
+        <appender-ref ref="ASYNC_FILE" />
+        <appender-ref ref="ASYNC_STDOUT"/>
+    </root>
+
+    <root level="info">
+        <appender-ref ref="ASYNC_FILE"/>
+        <appender-ref ref="ASYNC_STDOUT"/>
+    </root>
+
+
+    <!-- OM packages -->
+    <logger name="com.sigma.om" level="info" />
+
+</configuration>

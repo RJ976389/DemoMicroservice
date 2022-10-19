@@ -1,0 +1,168 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "om.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "om.labels" . | nindent 4 }}
+spec:
+  serviceName: {{ include "om.fullname" . }}
+  podManagementPolicy: Parallel
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "om.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      annotations:
+      {{- with .Values.podAnnotations }}
+      {{- toYaml . | nindent 8 }}
+      {{- end }}
+      checksum/application-config: {{ include (print $.Template.BasePath "/application-config.yaml") . | sha256sum }}
+      checksum/logback-config: {{ include (print $.Template.BasePath "/logback-config.yaml") . | sha256sum }}
+      checksum/install-config: {{ include (print $.Template.BasePath "/install-config.yaml") . | sha256sum }}
+      checksum/clientcredentialsmapper-config: {{ include (print $.Template.BasePath "/clientcredentialsmapper-config.yaml") . | sha256sum }}
+      checksum/oidcmapper-config: {{ include (print $.Template.BasePath "/oidcmapper-config.yaml") . | sha256sum }}
+      checksum/omp-config: {{ include (print $.Template.BasePath "/omp-config.yaml") . | sha256sum }}
+      labels:
+        {{- include "om.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "om.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.securityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.global.image.registry }}/{{ .Values.image.name }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          resources:
+  {{ toYaml .Values.resources | indent 12 }}
+imagePullPolicy: {{ .Values.global.image.pullPolicy }}
+ports:
+  - name: http
+    containerPort: 9004
+    protocol: TCP
+livenessProbe:
+  {{ toYaml .Values.livenessProbe | indent 12 }}
+startupProbe:
+  {{ toYaml .Values.startupProbe | indent 12 }}
+env:
+  - name: JAEGER_AGENT_HOST
+    {{ if .Values.jaegerAgent.host }}
+    value: "{{ .Values.jaegerAgent.host }}"
+    {{ else }}
+    valueFrom:
+      fieldRef:
+        fieldPath: status.hostIP
+    {{ end }}
+  {{ if .Values.java.javaOpts }}
+  - name: JAVA_OPTS
+    value: {{ .Values.java.javaOpts }}
+  {{ end }}
+  - name: JAEGER_AGENT_PORT
+    value: "{{ .Values.jaegerAgent.port }}"
+  - name: SPRING_CONFIG_LOCATION
+    value: /home/application/config/
+  - name: SPRING_DATASOURCE_USERNAME
+    valueFrom:
+      secretKeyRef:
+        name: "{{ required "secret.name is required"  .Values.secrets.name }}"
+        key: "{{ required "secret.userkey is required"  .Values.secrets.userkey }}"
+  - name: SPRING_DATASOURCE_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: "{{ required "secret.name is required"  .Values.secrets.name }}"
+        key: "{{ required "secret.passwordkey is required" .Values.secrets.passwordkey }}"
+  - name: TRUST_STORE_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: "{{ required "secret.name is required"  .Values.secrets.name }}"
+        key: "{{ required "secret.truststorepassword is required" .Values.secrets.truststorepassword }}"
+  - name: KEY_STORE_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: "{{ required "secret.name is required"  .Values.secrets.name }}"
+        key: "{{ required "secret.keystorepassword is required" .Values.secrets.keystorepassword }}"
+volumeMounts:
+  - name: tmp
+    mountPath: /tmp
+  {{- if .Values.git.local }}
+- name: git
+  mountPath: /home/application/git/git-workspace/
+  {{- end }}
+- name: {{ include "om.fullname" . }}-application-file
+  mountPath: /home/application/config/application.properties
+  subPath: application.properties
+- name: {{ include "om.fullname" . }}-install-file
+  mountPath: /home/application/config/install.properties
+  subPath: install.properties
+- name: {{ include "om.fullname" . }}-omp-file
+  mountPath: /home/application/config/omp.conf
+  subPath: omp.conf
+- name: {{ include "om.fullname" . }}-logback-file
+  mountPath: /home/application/config/logback.xml
+  subPath: logback.xml
+- name: {{ include "om.fullname" . }}-oidcmapper-file
+  mountPath: /home/application/config/oidcmapper.js
+  subPath: oidcmapper.js
+- name: {{ include "om.fullname" . }}-clientcredentialsmapper-file
+  mountPath: /home/application/config/clientcredentialsmapper.js
+  subPath: clientcredentialsmapper.js
+- name: certs
+  mountPath: /home/application/config/certs
+
+volumes:
+  - name: tmp
+    emptyDir: {}
+  {{- if .Values.git.local }}
+  - name: git
+    hostPath:
+      path: {{ .Values.git.localpath }}
+  {{- end }}
+  - name: {{ include "om.fullname" . }}-install-file
+    configMap:
+      name: {{ include "om.fullname" . }}-install-config
+
+  - name: {{ include "om.fullname" . }}-omp-file
+    configMap:
+      name: {{ include "om.fullname" . }}-omp-config
+
+  - name: {{ include "om.fullname" . }}-logback-file
+    configMap:
+      name: {{ include "om.fullname" . }}-logback-config
+
+  - name: {{ include "om.fullname" . }}-application-file
+    configMap:
+      name: {{ include "om.fullname" . }}-application-config
+
+  - name: {{ include "om.fullname" . }}-oidcmapper-file
+    configMap:
+      name: {{ include "om.fullname" . }}-oidcmapper-config
+
+  - name: {{ include "om.fullname" . }}-clientcredentialsmapper-file
+    configMap:
+      name: {{ include "om.fullname" . }}-clientcredentialsmapper-config
+
+  - name: certs
+    secret:
+      secretName: {{ .Values.secrets.sslname }}
+
+
+  {{- with .Values.nodeSelector }}
+nodeSelector:
+  {{- toYaml . | nindent 8 }}
+  {{- end }}
+  {{- with .Values.affinity }}
+affinity:
+  {{- toYaml . | nindent 8 }}
+  {{- end }}
+  {{- with .Values.tolerations }}
+tolerations:
+  {{- toYaml . | nindent 8 }}
+  {{- end }}
+
+restartPolicy: Always

@@ -1,0 +1,231 @@
+replicaCount: 1
+
+image:
+  name: ${docker.namespace}/${project.artifactId}
+  tag: ${item}
+
+global:
+  image:
+    registry: ${docker.registry}
+    pullPolicy: Always
+
+
+imagePullSecrets: []
+
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: false
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+podAnnotations:
+  prometheus.io/scrape: ""
+  prometheus.io/port: ""
+  prometheus.io/path: ""
+  sidecar.jaegertracing.io/inject: "true"
+
+envCfg:
+  releaseName: "newlight_integration_cfg"
+  releaseVersion: ""
+  envVals: |-
+    env_cfg21.name=OM_DEMO
+    env_cfg21.entry.value=\
+      {\
+        "canDelete"\:true,\
+        "canEdit"\:true,\
+        "canView"\:true,\
+        "category"\:"fulfillmentSystem",\
+        "entries"\:\
+        {\
+      	  "clientID"\:"EFyzvlo6OhkrVTOy2qmHCxdxNaEa",\
+      	  "clientSecret"\:"bc8PcBVFfrX0T8_txjWk3BlVXxEa",\
+      	  "oidcStubMode"\:"false",\
+      	  "password"\:"U612@apigw",\
+      	  "stubMode"\:"none",\
+      	  "grantType"\:"client_credentials",\
+      	  "userName"\:"U-612-HansenOM_Sub"\
+        }\
+      }
+    env_cfg21.entry.desc=SOI STUB Configurataion.
+    env_cfg21.entry.value_class=
+    env_cfg21.entry.renderer_class=
+
+podSecurityContext: {}
+# fsGroup: 2000
+
+securityContext:
+  runAsUser: 1001
+  runAsGroup: 1001
+  fsGroup: 1001
+
+resources:
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  limits:
+    cpu: 750m
+    memory: 1200Mi
+  requests:
+    cpu: 500m
+    memory: 1024Mi
+
+targetPort: 7050
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 80
+  targetMemoryUtilizationPercentage: 80
+
+schema:
+  schemaRegistryUrl: http://schema-registry-cp-schema-registry.schema-registry.svc.cluster.local:8081
+
+git:
+  local: false
+  localpath: /home/ec2-user/om-cfg.git/
+  username: sadmin
+  password: sadmin
+  repo: http://om-gitcontainer-service-6-0-0.om.svc.cluster.local:8080/cfgserver/om-cfg.git
+
+omProperties:
+  orderUrl: http://om-order-service-6-0-0.om.svc.cluster.local:9000/orderservice
+  activityUrl: http://om-activity-service-6-0-0.om.svc.cluster.local:11000/activityservice
+
+ssl:
+  keystore:
+    filepath: /home/application/config/certs/keystore.jks
+    type: JKS
+  truststore:
+    filepath: /home/application/config/certs/truststore.ts
+    type: JKS
+
+livenessProbe:
+  httpGet:
+    path: /omdemoserviceadapter/om/api/manage/health
+    port: 9020
+  initialDelaySeconds: 1
+  periodSeconds: 30
+
+startupProbe:
+  httpGet:
+    path: /omdemoserviceadapter/om/api/manage/health
+    port: 9020
+  periodSeconds: 5
+  failureThreshold: 60
+
+sysprops:
+  maxRestResponseSizeInMb:
+  maxRestRequestSizeInMb:
+  mdCfgDir: ""
+  instCfgFile: ""
+  jdbcCfgFile: ""
+  cfgmgrCfgPath: ""
+  cfgmgrInstallFile: ""
+  mdNodeName: ""
+
+naming:
+  tenant: core
+  env: dev
+
+spring:
+  datasourceUrl: jdbc:postgresql://aurora-cluster-tf.cluster-ctxb1bmlvpsf.eu-west-1.rds.amazonaws.com:5432/om_dev
+  #username: postgres
+  #password: welcome123
+  liquibase:
+    defaultSchema: soi_service
+  hikari:
+  kafka:
+    consumer:
+    producer:
+
+kafka:
+  bootstrapServers: b-2.hsndev-msk-picloudnati.5wxtyu.c3.kafka.eu-west-1.amazonaws.com:9094,b-1.hsndev-msk-picloudnati.5wxtyu.c3.kafka.eu-west-1.amazonaws.com:9094
+  persistMessageToDB: true
+  topic:
+    default:
+      consumers: 1
+      partitions: 3
+      replication_factor: 1
+      retry_count: 3
+      retry_delay: 10000
+    request:
+      consumers: 1
+      partitions: 3
+      replication_factor: 1
+      retry_count: 3
+      retry_delay: 10000
+    request_error:
+      consumers: 1
+      partitions: 3
+      replication_factor: 1
+      retry_count: 3
+      retry_delay: 10000
+    stop:
+      consumers: 1
+      partitions: 3
+      replication_factor: 1
+      retry_count: 3
+      retry_delay: 10000
+    reply:
+      consumers: 1
+      partitions: 3
+      replication_factor: 1
+
+entitySpecCache:
+  enabled: true
+  timeToIdleSeconds: 300
+  maxEntriesLocalHeap: 100
+  maxEntriesLocalDisk: 0
+  timeToLiveSeconds: 0
+  statistics: false
+  compressObjects: false
+
+entitySpecDBCache:
+  enabled: true
+  timeToIdleSeconds: 300
+  maxEntriesLocalHeap: 200
+  maxEntriesLocalDisk: 0
+  timeToLiveSeconds: 0
+  statistics: false
+  compressObjects: false
+
+jaegerAgent:
+  port: 6831
+  # Optional, use it in case of jaeger install as sidecar
+  #host: localhost
+jaeger:
+  enable: false
+  header: om-trace-id
+  sampler:
+    type: const
+    param: 1
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+logback:
+  logger:
+    - name:
+      loglevel:
+
+secrets:
+  name: om-secrets
+  userkey: username
+  passwordkey: password
+  truststorepassword: truststorepass
+  keystorepassword: keystorepass
+  sslname: ssl-keystore-cert
+
+java:
+  javaOpts: "-Xmx1024m -Xms800m -XX:NewSize=512m -XX:MaxNewSize=512m -Xss4m -Djavax.net.ssl.trustStore=/home/application/config/certs/truststore.ts -Djavax.net.ssl.trustStorePassword=changeit"

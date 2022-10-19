@@ -1,0 +1,269 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.sigma.ps.demo</groupId>
+    <artifactId>om-demo-service-adapter</artifactId>
+    <packaging>pom</packaging>
+    <version>1.0-SNAPSHOT</version>
+
+    <modules>
+        <module>om-demo-service-adapter-impl</module>
+        <module>om-demo-service-adapter-service</module>
+    </modules>
+    <properties>
+        <!--<java.version>11</java.version>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
+
+        <om.utils.version> 6.2.0-SNAPSHOT</om.utils.version>
+        <om.api.version> 6.2.0-SNAPSHOT</om.api.version>
+        <om.git.version> 6.2.0-SNAPSHOT</om.git.version>
+        <om.spring.version> 6.2.0-SNAPSHOT</om.spring.version>
+        <om.repository.version> 6.2.0-SNAPSHOT</om.repository.version>
+        <om.soi.version> 6.2.0-SNAPSHOT</om.soi.version>
+        <om.core.version> 6.2.0-SNAPSHOT</om.core.version>
+        <spring.boot.version>2.5.13</spring.boot.version>
+        <cxf.version>3.5.1</cxf.version>
+        <camel.version>3.11.7</camel.version>
+        <camel.stream.version>3.11.7</camel.stream.version>
+        <jakarta.xml.version>2.3.3</jakarta.xml.version>
+        <sf.ehcache.version>2.10.9.2</sf.ehcache.version>
+        <nimbusds.oauth2.version>9.9.1</nimbusds.oauth2.version>
+        <ws.rs.version>2.1.1</ws.rs.version>
+        <json.smart.version>2.4.7</json.smart.version>
+        <kafka.client.version>2.8.0</kafka.client.version>
+        <surefire.version>2.22.1</surefire.version>
+        <jacoco.version>0.8.6</jacoco.version>
+        <coverage>0.8</coverage>
+        <sonar.coverage.jacoco.xmlReportPaths>
+            ${basedir}/target/jacoco-aggregate-ut/jacoco.xml
+        </sonar.coverage.jacoco.xmlReportPaths>
+
+        <dockerfile-maven-version>1.4.10</dockerfile-maven-version>
+        <maven.iterator.plugin.version>0.5.1</maven.iterator.plugin.version>
+        <maven.assembly.plugin.version>3.1.1</maven.assembly.plugin.version>
+
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <docker.registry>dot-portal.de.pri.o2.com:8079</docker.registry>
+        <docker.namespace>om</docker.namespace>
+        <image.tag>${project.version}</image.tag>
+        <jackson2Version>2.12.4</jackson2Version>
+        <junit.version>4.13.2</junit.version>
+        <jsonassert.version>1.5.0</jsonassert.version>
+        <quartz.version>2.3.2</quartz.version>-->
+        <java.version>11</java.version>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
+
+        <om.utils.version>6.2.0-SNAPSHOT</om.utils.version>
+        <om.api.version>6.2.0-SNAPSHOT</om.api.version>
+        <om.git.version>6.2.0-SNAPSHOT</om.git.version>
+        <om.spring.version>6.2.0-SNAPSHOT</om.spring.version>
+        <om.repository.version>6.2.0-SNAPSHOT</om.repository.version>
+        <om.soi.version>6.2.0-SNAPSHOT</om.soi.version>
+
+        <spring.boot.version>2.5.14</spring.boot.version>
+        <commons.validator.version>1.7</commons.validator.version>
+        <json.smart.version>2.4.7</json.smart.version>
+        <quartz.version>2.3.2</quartz.version>
+        <kafka.client.version>2.8.0</kafka.client.version>
+        <thymeleaf.spring5.version>3.0.13.RELEASE</thymeleaf.spring5.version>
+        <camel.version>3.11.7</camel.version>
+        <camel.stream.version>3.11.7</camel.stream.version>
+        <jquery.version>3.6.0</jquery.version>
+        <popper.js.version>2.5.4</popper.js.version>
+        <bootstrap.version>5.0.2</bootstrap.version>
+        <webjars.locator.version>0.41</webjars.locator.version>
+        <font.awesome.version>5.15.3</font.awesome.version>
+        <requirejs.version>2.3.6</requirejs.version>
+        <codemirror.version>5.62.0</codemirror.version>
+        <vkbeautify.version>0.99.00.beta</vkbeautify.version>
+        <toastr.version>2.1.0</toastr.version>
+
+        <junit.version>4.13.2</junit.version>
+        <surefire.version>2.22.1</surefire.version>
+        <jacoco.version>0.8.6</jacoco.version>
+        <coverage>0</coverage>
+        <sonar.coverage.jacoco.xmlReportPaths>
+            ${basedir}/target/jacoco-aggregate-ut/jacoco.xml
+        </sonar.coverage.jacoco.xmlReportPaths>
+
+        <maven.dockerfile.plugin.version>1.4.10</maven.dockerfile.plugin.version>
+        <maven.assembly.plugin.version>3.1.1</maven.assembly.plugin.version>
+        <maven.exec.plugin.version>1.4.0</maven.exec.plugin.version>
+        <maven.license.plugin.version>2.0.0</maven.license.plugin.version>
+        <maven.iterator.plugin.version>0.5.1</maven.iterator.plugin.version>
+    </properties>
+   <!-- <repositories>
+        <repository>
+            <id>snapshots</id>
+            <name>libs-snapshot</name>
+            <url>https://dot-portal.de.pri.o2.com/nexus/repository/Hansen_OM/libs-snapshot-local</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>Hansen-maven-repo</id>
+            <name>maven repository</name>
+            <url>https://dot-portal.de.pri.o2.com/nexus/repository/Hansen_OM/</url>
+        </repository>
+
+        <repository>
+            <id>ext-release-local</id>
+            <name>lib-ext-release-local</name>
+            <url>https://dot-portal.de.pri.o2.com/nexus/repository/Hansen_OM/ext-release-local</url>
+        </repository>
+        <repository>
+            <id>lib-release-local</id>
+            <name>lib-release-local</name>
+            <url>https://dot-portal.de.pri.o2.com/nexus/repository/maven-snapshots/</url>
+        </repository>
+
+        &lt;!&ndash; repository> <id>io-spray</id> <name>io-spray</name> <url>http://repo.spray.io</url>
+            </repository> <repository> <id>apache.org</id> <name>Apache Repository</name>
+            <url>https://repository.apache.org/content/repositories/releases/</url> </repository &ndash;&gt;
+        <repository>
+            <id>maven-central</id>
+            <name>maven-central</name>
+            <url>https://dot-portal.de.pri.o2.com/nexus/repository/Hansen_OM/</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>typesafe</id>
+            <name>typesafe</name>
+            <url>https://dot-portal.de.pri.o2.com/nexus/repository/maven-typesafe/</url>
+        </repository>
+    </repositories>-->
+
+
+    <reporting>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>${surefire.version}</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-report-plugin</artifactId>
+                <version>${surefire.version}</version>
+            </plugin>
+        </plugins>
+    </reporting>
+
+    <repositories>
+        <repository>
+            <id>libs-snapshot</id>
+            <name>libs-snapshot</name>
+            <url>http://artifactory.sigmasys.net:8081/artifactory/libs-snapshot</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>libs-release</id>
+            <name>libs-release</name>
+            <url>http://artifactory.sigmasys.net:8081/artifactory/libs-release</url>
+        </repository>
+    </repositories>
+
+    <dependencies>
+      <!--  <dependency>
+            <groupId>com.sigma.om.core</groupId>
+            <artifactId>om-utils</artifactId>
+            <version>${om.utils.version}</version>
+        </dependency>-->
+
+        <!-- om-spring -->
+
+       <dependency>
+            <groupId>org.apache.kafka</groupId>
+            <artifactId>kafka-clients</artifactId>
+            <version>${kafka.client.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-core-model</artifactId>
+            <version>3.11.2</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-stream</artifactId>
+            <version>3.11.7</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-core</artifactId>
+            <version>${camel.version}</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/com.zaxxer/HikariCP -->
+        <!--<dependency>
+            <groupId>com.zaxxer</groupId>
+            <artifactId>HikariCP</artifactId>
+            <version>4.0.3</version>
+        </dependency>
+
+    <dependency>
+            <groupId>com.sigma.om.core</groupId>
+            <artifactId>om-envcfg</artifactId>
+            <version>${om.git.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.sigma.om.core</groupId>
+            <artifactId>om-config-api</artifactId>
+            <version>${om.git.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.sigma.om.core</groupId>
+            <artifactId>om-config-impl</artifactId>
+            <version>6.2.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.sigma.om.core</groupId>
+            <artifactId>om-catalog-api</artifactId>
+            <version>6.2.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.sigma.om.core</groupId>
+            <artifactId>om-cfgmgr</artifactId>
+            <version>6.2.0-SNAPSHOT</version>
+        </dependency>
+-->
+
+
+    <!--<dependency>
+            <groupId>com.sigma.om.core</groupId>
+            <artifactId>om-order-repo-rest</artifactId>
+            <version>6.2.0-SNAPSHOT</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.sigma.om.core</groupId>
+            <artifactId>om-catalog-rest-client</artifactId>
+            <version>6.2.0-SNAPSHOT</version>
+            <scope>runtime</scope>
+        </dependency>-->
+    </dependencies>
+
+</project>

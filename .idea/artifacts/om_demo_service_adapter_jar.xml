@@ -1,0 +1,10 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="om-demo-service-adapter:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/om_demo_service_adapter_jar</output-path>
+    <root id="archive" name="om-demo-service-adapter.jar">
+      <element id="module-output" name="om-demo-service-adapter-impl" />
+      <element id="module-output" name="om-demo-service-adapter" />
+      <element id="module-output" name="om-demo-service-adapter-service" />
+    </root>
+  </artifact>
+</component>
