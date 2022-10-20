@@ -50,7 +50,7 @@
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
         <camel.stream.version>3.11.2</camel.stream.version>
-        <om.repository.version>6.0.0-SP1</om.repository.version>
+        <om.repository.version>6.2.0-SP1-SNAPSHOT</om.repository.version>
     </properties>
     <!--Mandatory dependencies for Adapter start-->
   <!--  <dependencyManagement>-->

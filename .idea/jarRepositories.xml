@@ -31,5 +31,15 @@
       <option name="name" value="central" />
       <option name="url" value="https://repo.maven.apache.org/maven2/" />
     </remote-repository>
+    <remote-repository>
+      <option name="id" value="libs-snapshot" />
+      <option name="name" value="libs-snapshot" />
+      <option name="url" value="http://artifactory.sigmasys.net:8081/artifactory/libs-snapshot" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="libs-release" />
+      <option name="name" value="libs-release" />
+      <option name="url" value="http://artifactory.sigmasys.net:8081/artifactory/libs-release" />
+    </remote-repository>
   </component>
 </project>
